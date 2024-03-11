@@ -32,9 +32,9 @@ client.connect()
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use((req, res, next) => {
-    res.sendFile(path.resolve(__dirname, 'public', 'index.html'))
-})
+// app.use((req, res, next) => {
+//     res.sendFile(path.resolve(__dirname, 'public', 'index.html'))
+// })
 
 
 
@@ -50,7 +50,8 @@ app.post('/api/shorten', async (req, res) => {
     const shortId = shortid.generate();
 
     // Create the shortened URL
-    const shortenedUrl = `http://Website:${PORT}/${shortId}`;
+    // const shortenedUrl = `http://localhost:${PORT}/${shortId}`;
+    const shortenedUrl = `${process.env.REACT_APP_SERVER_URL}/${shortId}`;
 
     // Store the mapping in the MongoDB database
     await db.collection('urls').insertOne({ shortId, originalUrl });
