@@ -1,12 +1,18 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const shortid = require('shortid');
 const cors = require('cors');
+const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 82;
-const MONGODB_URI = 'mongodb+srv://enochpereracoding2:SHKPXV8TGCczBcfq@cluster0.tirextk.mongodb.net/urlShorten?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.dbUrl;
 
 app.use(bodyParser.json());
 app.use(cors())
@@ -21,6 +27,17 @@ client.connect()
         console.log('Connected to MongoDB');
     })
     .catch(err => console.error('Error connecting to MongoDB:', err));
+
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use((req, res, next) => {
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'))
+})
+
+
+
 
 app.post('/api/shorten', async (req, res) => {
     const { originalUrl } = req.body;
@@ -55,6 +72,13 @@ app.get('/:shortId', async (req, res) => {
         res.status(404).send('Not Found');
     }
 });
+
+
+
+
+
+
+
 
 app.listen(PORT, () => {
     console.log(`CORS-enabled web server listening on port ${PORT} and Server is running on http://localhost:${PORT}`);
